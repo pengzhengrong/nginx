@@ -1,0 +1,113 @@
+nginx组成：
+	可以简单的理解为由3部分组成：指令，区段(block)或者叫做模块 , 逻辑结构
+模块：
+	每个模块内有不同的指令，某些指令只能在特定的模块中才能生效。但是有些指令可以在根模块作为全局的效果。
+	某些情况下，不同的模块之间能够互相嵌套
+	events{
+		worker_connections 1024;  #最大连接数
+	}
+	
+	一个http区段允许多个server块，但是每个server块允许配置一个虚拟主机
+	一server区段允许多个location块，可以根据特定的路径配置
+	模块之间的继承：模块内嵌套的模块，能够继承父模块的指令。例如access_log.但是子模块设置的属性会覆盖父模块
+	http{
+		server{
+			listen 80;
+			server_name iit.com;
+			access_log /var/log/nginx/iit_access.log;
+			location ^~ /admin/{
+				index index.php;
+				access_log off;
+			}
+		}
+	}
+	
+单位：
+	M || m 兆 k || K 千字节
+	ms(milliseconds)  s(seconds)(default) m(minutes) h(hours) w(weeks) M(month) y(year) 	
+	
+核心模块指令
+	daemon : on(default) off 启用或者禁用守护进程 ，如果禁用只能前端运行。  
+	debug_points : stop abort default:none,配合调试器进行调试
+	env ： env MY_VARIABLE=my_value 允许重定义环境变量
+	lock_file : lock_file logs/nginx.lock 为了互斥现象 默认编译时定义
+	master_process : on(default) off 如果关闭那么只开启独一无二的进程，默认是主进程和多个worker进程
+	ssl_engine : 系统的有效硬件ssl加速器
+	thread_stack_size : 定义线程堆栈的大小
+	timer_resolution : 控制系统调用 gettimeofday()时间间隔
+	worker_threads : 为每一个worker进程定义一定数量的线程。
+	worker_priority : 定义worker进程的优先级，从低到高-20～19
+	worker_rlimit_sigpending : 定义每个用户能够被排入队列的信号数量
+	worker_directory : worker 进程的工作目录
+	worker_rlimit_core : 定义worker进程内核文件大小
+	
+	error_log ,log_not_found
+		使用环境：main http server location
+		error_log logs/error.log error （default）
+		log_not_found : on(default) off 
+	pid ： pid logs/nginx.pid 用于存放Nginx 守护进程Pid文件路径
+	user ： 默认编译时定义 Nginx 的worker按照这个设定值运行
+	worker_cpu_affinity : 将worker进程绑定到一个CPU上
+	worker_processes : 定义worker进程的数量 1(default)
+	worker_rlimit_nofile : 定义一个worker进程能够处理的文件数量
+	
+HTTP核心
+	1. 2种结构
+		(1) http{
+			service{
+				location{...}
+				location{...}
+			}
+		}
+		(2) http{
+			service{
+				location{...}
+			}
+			service{
+				location{...}
+			}
+		}
+		
+		keepalive_timeout time1 [time2]; #定义keep-alive 的时长
+		sendfile on; # 默认off ，那么Nginx将自己处理文件传递。 on 使用sendfile 内核来调用处理文件传递
+		tcp_nopush on; # 默认off ，on 则尝试在单个TCP数据包中发送整个HTTP响应头
+		#tcp_nodelay on; 默认on，唯一目的就是禁止使用Nagle的缓冲算法。场合：应用程序经常发送小的数据包，而不立即获得响应。
+		
+		root 项目根目录
+		index 起始页面
+		error_page 修改访问uri产生的HTTP响应代码并选择性的将它替换为其他代码
+			error_page 404 /not_found.html;
+			error_page 500 501 502 503 504 /server_error.html;
+		client_max_body_size 200m; #客户端请求的最大值。如果上传那么很重要
+		alias 别名，作用在location。
+			location /admin{
+				alias /adminTemp/index; #将由别名地址提供访问的资源
+			}
+		internal 只能作用于location，由该指令指定的资源对外部请求是不能访问的。
+			设想：如果配置这个，能不能禁止外部调用？
+		#这个设置会影响响应数据包HTTP头中的Content-Type
+		include       mime.types;
+		#Nginx提供一个文件的时候，先于MIME文件进行对比，如果找不到那么使用默认的type作为响应头
+		default_type  application/octet-stream;
+	 
+	 	location [ = | ~ | ~* | ^~ | @] pattern {
+	 		...
+	 	}
+	 	
+	 	1. 无符号
+	 		location /index {} 可匹配不区分大小写的index，index?param , index2 , index/
+		2. =
+			location = /index{}  精确匹配 只能匹配 /index	 /INDEX 如果系统不区分大小写 带参
+		3. ～ 
+			location ~  ^/index${} 区分大小写 精确匹配/index 不能匹配/index/ 因为$  带参
+		4. ～×
+			location ~*  ^/index${} 必须不区分大小写 /index /INDEX 带参
+		5. ^~
+			location ^~  ^/index${} 类似无符号行为，但是不同之处在于：如果一旦匹配那么就停止搜索其他的
+		6. @
+			客户端不能访问，只有内部请求才能访问。例如error_page
+			
+		地址的匹配和配置的顺序无关，Nginx会以特定的顺序执行。
+			
+			
+			 

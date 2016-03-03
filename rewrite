@@ -1,0 +1,41 @@
+需要跳转的地址：http://apitest1.xw.feedss.com:9001/t/CWAHS641?newsid=31248
+跳转后的地址：/index.php?r=dwz/jump&shorturl=CWAHS641&newsid=31248
+1. 第一种方法
+	if ($request_uri ~* "/t/([a-zA-Z0-9]+)\?(.*)$")
+        {
+           set $module $1;
+           set $Mypath $2;
+           rewrite  (.*)  /index.php?r=dwz/jump&shorturl=$module&$Mypath   last;
+        }
+                        
+2. 第二种方法                    
+	rewrite ^/t/([a-zA-Z0-9]+)\/?(.*)$ /index.php?r=dwz/jump&shorturl=$1&$2 last;
+
+3. 第三种方法
+	rewrite ^/t/([a-zA-Z0-9]+)$ /index.php?r=dwz/jump&shorturl=$1&$query_string? last;
+	
+
+Nginx rewrite 中，正则用到{ } 这2个符号的时候，会和Nginx的{}符号冲突，因此需要放在双引号或者单引号之间。
+
+if 模块
+	if( $string [ 操作符[ $string2]] ){
+		
+	}
+	
+	操作符：
+		无操作符：if( $string ) $string不是空或者不为0 则为true
+		= ,!=   
+		~ ,!~  区分大小写 可以使用正则匹配
+		~* ,!~*  不区分大小写
+		-f , !-f    测试指定文件是否存在 ，测试文件的不存在性
+		-d, !-d   测试一个目录是否存在
+		-e ,!-e   测试一个目录 或者 文件 或者 符号链接是否存在
+		-x,!-x     测试文件是否可执行
+		
+	指令：
+		rewrite ： rewrite regexp replacement [flag]
+			flag = last : 后面的rewrite 将会被忽略，新的URI 将会被location 处理
+			 
+		
+	
+	
