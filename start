@@ -109,5 +109,16 @@ HTTP核心
 			
 		地址的匹配和配置的顺序无关，Nginx会以特定的顺序执行。
 			
-			
-			 
+其他模块
+	index 模块 autoindex 模块  random_index 模块 log 模块 
+	auth_basic 模块 提供基本的认证功能
+	Access 模块 
+		两个重要的指令 allow deny
+	limit zone 模块 
+		用来限定服务器的最大并发连接数
+	gzip filter 模块
+	charset filter 模块 字符编码 影响content-type
+	image filter 模块
+	SSL 模块
+	secure link 模块
+	 

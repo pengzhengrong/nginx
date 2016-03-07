@@ -35,7 +35,35 @@ if 模块
 	指令：
 		rewrite ： rewrite regexp replacement [flag]
 			flag = last : 后面的rewrite 将会被忽略，新的URI 将会被location 处理
-			 
+			flag = break : 当前重写规则被用，但是忽略后面的rewrite ，不会重新匹配rewrite。
+			flag = redirect : 返回302
+			flag = permanent : 返回301
+			如果指定一个http://开头的作为替换uri，那么Nginx将会自动使用redirect
+		break ： 如果想要对请求的uri 存在，那么不改写，否则改写uri;
+			if( -f $uri ){
+				break;
+			} 
+			if( $uri ~ ^/search/(.*)$ ){
+				set $query $1;
+				rewrite /search.php?r=$query;
+			}
+		return : 返回一个指定的状态码
+			if( $uri ~ ^/admin$ ){
+				return 403;
+				rewrite ... ;   #这个rewrite 不会被执行
+			}
+		set ：重定义一个变量 set $variable value;
+
+SSI : Server Side Include 
+	最终要的体现在include。可以更加的丰富html。但是感觉现在接触不多，也用的好像不多。
+
+Log 模块：将是管理员很重要的一个模块，因为日志输出都在这
+	access_log path [format [buffer=size]] | off  ;  #format 的默认格式为combined。
+	log_format 默认的模板为 combined。
+	open_log_file_cache  为日志文件描述符配置缓存
+			  	
+		
+			
 		
 	
 	
