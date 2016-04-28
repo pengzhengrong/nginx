@@ -1,0 +1,47 @@
+apatch 作为重量级的存在，存在着一些问题。安全方面的问题也存在。原因：因为apatch的用户量广，所以暴露的问题自然多。
+认为apatch是比较注重功能方面。
+nginx 作为轻量级服务器的存在，可以代替apatch。但是很多的应用采取的是两者结合。即客户端-Nginx-apatch的模式。
+
+主要指令
+proxy_pass 
+	proxy_pass http://hostname:port;
+proxy_method
+proxy_hide_header
+proxy_pass_header  强制一些被忽略的头传递到客户端
+proxy_pass_request_body  proxy_pass_request_headers  是否本别将额外的请求头和请求体传给客户端
+proxy_redirect  允许改写出现在HTTP头却被后端服务器触发重定向的URL。
+	off default url 
+proxy_next_upstream 
+
+缓存指令
+proxy_buffer_size
+proxy_buffering 是否缓冲后端服务器的响应
+proxy_buffers 设置缓冲数量和大小
+proxy_busy_buffers_size 缓冲区中后端数据积压超过该值那么缓冲被刷新并且发送客户端。
+proxy_cache 定义缓冲zone，便于下次重用
+proxy_cache_key 定义缓存key
+proxy_cache_path 存放缓存文件的目录
+proxy_cache_methods 有资格缓存的http方法
+proxy_cache_min_uses 有资格缓存之前被击中的最少次数
+proxy_cache_valid  对各种不同的相应代码定义不同的缓存时间
+proxy_cache_use_stale 是否提供过期的缓存
+proxy_max_temp_file_size 临时文件的最大值 默认1g 为0最禁用
+proxy_temp_file_write_size 设置写缓冲区的大小
+proxy_temp_path 临时文件和缓存文件的路径
+
+
+超时设定和错误
+proxy_connect_timeout
+proxy_read_timeout
+proxy_send_timeout
+proxy_ignore_clinet_abort 
+proxy_intercept_errors
+proxy_send_lowat
+
+proxy_headers_hash_max_size  加速处理请求 使用hash表来存储代理的头信息
+proxy_headers_hash_bucket_size 设置代理头hash表中最长的header名字
+proxy_ignore_headers  阻止Nginx处理后端服务器响应的4种头
+proxy_set_body  设置一个静态的请求体  用于测试
+proxy_set_header 可以多次申明 重新定义代理header值在转到后端服务器
+proxy_store  是否将后端服务器的响应存储为一个文件
+proxy_store_access 定义文件的访问权限

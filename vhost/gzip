@@ -1,0 +1,24 @@
+gzip_buffers  设定存储被压缩响应头的缓存数量和大小
+	gzip_buffers 44k 默认值 gzip_buffers amount size
+gzip_comp_level  设定算法的压缩级别 范围1-9从低到高 1压缩最快占用cpu最小 默认1
+gzip_disable  对于与指定的正则表达式匹配的用户代理，他们的HTTP 请求头禁用gzip 压缩  语法：正则
+gzip_http_version 对指定的协议版本使用gzip压缩 默认1.1 可选择1.0
+gzip_min_length  如果响应体的长度小于指定的值，那么就不使用压缩
+gzip_proxied 启用或禁用压缩，用于从代理服务器上接收到的响应体。（反向代理）
+gzip_types 默认text/xml  语法：gzip_types [mime_type1] [[mime_type2]...
+gzip_vary 向响应数据包添加vary：Accept-Encoding HTTP 头 默认off
+gzip_window  这只用于gzip操作的窗口缓冲的大小 默认MAX_WBIT（来源于zlib库）	
+gzip_hash 设置分配给内部压缩状态的内存总数 默认：MAX_MEM_LEVEL
+postpone_gzipping 在开始进gzip压缩定义的一个最小的数据阀值 默认0
+gzip_no_buffer 默认：off 将数据发送客户端之前Nginx等待至少一个缓冲被数据填满。 如果为on那么禁用缓冲
+
+
+charset 默认off charset utf-8; 设置响应的content-type 编码
+source_charset 设置初始响应的编码
+override_charset Nginx从代理或者fastcgi网关收到一个响应时，是否检测字符编码和重写。默认 off
+charset_types 对响应头MIME格式 进行编码 
+charset_map 重新定义字符编码表 charset_map src_encoding dest_encoding
+
+
+
+

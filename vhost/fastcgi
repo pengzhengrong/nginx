@@ -107,6 +107,26 @@
 		}
 	}
 	
+upstream
+	upstream phpfpm{
+		ip_hash;
+		server 192.168.0.50:9000;
+		server 192.168.0.51:9000;
+		server 192.168.0.52:9000 weight=2;
+	}
+	一个请求可能被发到不同服务器，从而用户的信息可能会丢失。可以采用 ip_hash 命令
+	这个命令可以通过ip作为hash 请求服务器。然而用户可能会更改hash，因此不是最好的办法。
+	如果使用了ip_hash 那么weight 会失效。
+	max_fails=n 定义可以发生通信错误的最大次数，在faile_timeout 时间内。如果条件触发，那么将会使这个服务器不再起作用
+	fail_timeout=n 定义一个时间限制和在时间限制内的错误数
+	down 将后台服务器标记为down，从而不再使用该服务器。仅在ip_hash指令的情况下。
+	backup 标记一个后端服务器作为备份服务器。
+	
+fpm -->fastcgi php mamage 
+	fpm 将fastcgi带到了一个新的高度 
+
+
+	
 	
 	
 	
